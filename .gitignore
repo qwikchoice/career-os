@@ -1,0 +1,22 @@
+# Real personal database: schema is committed (schemas/schema.sql), the
+# actual data is not (spec section 34 — "real personal DB locally ignored").
+data/career.db
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+
+# DB backups hold personal data
+*.bak*
+
+# your own profile and notes stay local
+profile.md
+inbox/*
+!inbox/.gitkeep
+data/*
+!data/.gitkeep

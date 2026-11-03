@@ -1,0 +1,9 @@
+# Optional. Career OS's core (schema, services, CLI, heuristic classifier)
+# needs nothing beyond the Python standard library. Install this only to
+# enable the Jev classifier (career_os/providers/jev.py) — everything
+# falls back to the stdlib heuristic automatically if it's absent.
+#
+#   pip install -r requirements-optional.txt
+#   (then set TYPESAFE_API_KEY in your environment)
+
+typesafe-sdk

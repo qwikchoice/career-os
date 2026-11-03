@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Career OS — Data Browser</title>
+<link rel="stylesheet" href="/static/dashboard.css">
+<style>
+  :root {
+    color-scheme: light dark;
+    --ink: #14171C; --ink-soft: #52585F; --ink-faint: #6B7279;
+    --surface: #F6F5F2; --surface-raised: #FFFFFF; --border: #E2DFD8;
+    --accent: #2F6F5E; --accent-soft: #E3EEE9;
+    --status-good: #276B50; --status-good-bg: #E6F2EC;
+    --status-neutral: #6B6459; --status-neutral-bg: #ECEAE4;
+    --error: #B4472F; --error-bg: #F7E8E3;
+    --accent-2: #4C9A86; --warn: #7A5F1E; --warn-bg: #F4ECD6;
+    --on-accent: #FFFFFF; --on-error: #FFFFFF;
+    --btn-a: color-mix(in srgb, var(--accent) 88%, #000); --btn-b: color-mix(in srgb, var(--accent-2) 62%, #000);
+    --shadow: 0 1px 2px rgba(20,23,28,.05), 0 6px 18px rgba(20,23,28,.06); --glow: 0 0 0 transparent;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #EDEEF0; --ink-soft: #AEB4BB; --ink-faint: #8E949B;
+      --surface: #13151A; --surface-raised: #1B1E24; --border: #2B2E35;
+      --accent: #5FA890; --accent-soft: #1C2B27;
+      --status-good: #5FA890; --status-good-bg: #17271F;
+      --status-neutral: #9A9289; --status-neutral-bg: #22252B;
+      --error: #D97B63; --error-bg: #2A1C18;
+      --accent-2: #7FC4AF; --warn: #D6B870; --warn-bg: #3A3220;
+      --btn-a: #2F6F5E; --btn-b: #3F8A76; --on-error: #1A0A06;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.28);
+    }
+  }
+
+  /* ---- themes (design: designs/2026-11-02_career-os-themes.md) ----
+     data-theme on <html>; no attribute = Auto (follows the system light/dark setting above). */
+  :root[data-theme="forest"] {
+    color-scheme: light;
+    --ink: #14171C; --ink-soft: #52585F; --ink-faint: #6B7279;
+    --surface: #F6F5F2; --surface-raised: #FFFFFF; --border: #E2DFD8;
+    --accent: #2F6F5E; --accent-soft: #E3EEE9; --accent-2: #4C9A86;
+    --status-good: #276B50; --status-good-bg: #E6F2EC; --status-neutral: #6B6459; --status-neutral-bg: #ECEAE4;
+    --error: #B4472F; --error-bg: #F7E8E3; --warn: #7A5F1E; --warn-bg: #F4ECD6;
+    --c-applied: #8B9097; --c-progress: #2F6F5E; --c-reject: #B4472F; --c-other: #C2A25A;
+    --c-grid: #E2DFD8; --c-bar: #6E8F86; --c-met: #2F7D5E; --c-target: #B4472F;
+    --t1: #2F6F5E; --t2: #5B7FA6; --t3: #C2A25A; --t4: #A0617E; --t5: #7C8E57; --t6: #8B9097;
+    --on-accent: #FFFFFF; --on-error: #FFFFFF;
+    --btn-a: color-mix(in srgb, var(--accent) 88%, #000); --btn-b: color-mix(in srgb, var(--accent-2) 62%, #000);
+    --shadow: 0 1px 2px rgba(20,23,28,.05), 0 6px 18px rgba(20,23,28,.06); --glow: 0 0 0 transparent;
+  }
+  :root[data-theme="ocean"] {
+    color-scheme: light;
+    --ink: #0F1B2D; --ink-soft: #3F546E; --ink-faint: #566E8A;
+    --surface: #EAF2FA; --surface-raised: #FFFFFF; --border: #CFE0F0;
+    --accent: #0A62BF; --accent-soft: #DCEBFB; --accent-2: #12B5CB;
+    --status-good: #0B7556; --status-good-bg: #DDF3EB; --status-neutral: #5B6B80; --status-neutral-bg: #E3EBF4;
+    --error: #B5302A; --error-bg: #FBE6E3; --warn: #85560A; --warn-bg: #FCEFCF;
+    --c-applied: #4A90E2; --c-progress: #12A38B; --c-reject: #D2443B; --c-other: #E0A526;
+    --c-grid: #D5E3F1; --c-bar: #4A90E2; --c-met: #0E8F6A; --c-target: #D2443B;
+    --t1: #0B6FD6; --t2: #12B5CB; --t3: #E0A526; --t4: #8E5BD6; --t5: #2FB67C; --t6: #7087A1;
+    --on-accent: #FFFFFF; --on-error: #FFFFFF;
+    --btn-a: color-mix(in srgb, var(--accent) 88%, #000); --btn-b: color-mix(in srgb, var(--accent-2) 62%, #000);
+    --shadow: 0 1px 2px rgba(11,60,120,.06), 0 8px 22px rgba(11,60,120,.09); --glow: 0 0 0 transparent;
+  }
+  :root[data-theme="sunset"] {
+    color-scheme: light;
+    --ink: #2A1810; --ink-soft: #6B4A3C; --ink-faint: #826557;
+    --surface: #FFF4EA; --surface-raised: #FFFFFF; --border: #F2D9C7;
+    --accent: #B53510; --accent-soft: #FDE3D6; --accent-2: #F5A524;
+    --status-good: #26794B; --status-good-bg: #E1F3E8; --status-neutral: #7A6558; --status-neutral-bg: #F3E6DC;
+    --error: #B52F22; --error-bg: #FBE3DE; --warn: #85560A; --warn-bg: #FDEBC8;
+    --c-applied: #E8913A; --c-progress: #2E8B57; --c-reject: #C0392B; --c-other: #F5A524;
+    --c-grid: #F2DFD0; --c-bar: #E8913A; --c-met: #2E8B57; --c-target: #C0392B;
+    --t1: #E4572E; --t2: #F5A524; --t3: #2E8B57; --t4: #C2457A; --t5: #4A7FB5; --t6: #A38577;
+    --on-accent: #FFFFFF; --on-error: #FFFFFF;
+    --btn-a: color-mix(in srgb, var(--accent) 88%, #000); --btn-b: color-mix(in srgb, var(--accent-2) 62%, #000);
+    --shadow: 0 1px 2px rgba(120,50,10,.06), 0 8px 22px rgba(120,50,10,.09); --glow: 0 0 0 transparent;
+  }
+  :root[data-theme="violet"] {
+    color-scheme: light;
+    --ink: #1E1530; --ink-soft: #5A4A78; --ink-faint: #73639A;
+    --surface: #F5F0FD; --surface-raised: #FFFFFF; --border: #E1D6F4;
+    --accent: #7C3AED; --accent-soft: #EBE0FD; --accent-2: #DB2777;
+    --status-good: #10724F; --status-good-bg: #DFF3EA; --status-neutral: #6C6283; --status-neutral-bg: #ECE6F5;
+    --error: #C42B47; --error-bg: #FBE3E8; --warn: #85560A; --warn-bg: #FBEDCB;
+    --c-applied: #8B7FD6; --c-progress: #17936A; --c-reject: #D1344F; --c-other: #E0A526;
+    --c-grid: #E4DAF3; --c-bar: #8B6FE0; --c-met: #17936A; --c-target: #D1344F;
+    --t1: #7C3AED; --t2: #E0479E; --t3: #E0A526; --t4: #2F9BD6; --t5: #17936A; --t6: #8F82A8;
+    --on-accent: #FFFFFF; --on-error: #FFFFFF;
+    --btn-a: color-mix(in srgb, var(--accent) 88%, #000); --btn-b: color-mix(in srgb, var(--accent-2) 62%, #000);
+    --shadow: 0 1px 2px rgba(60,20,120,.06), 0 8px 22px rgba(60,20,120,.10); --glow: 0 0 0 transparent;
+  }
+  :root[data-theme="midnight"] {
+    color-scheme: dark;
+    --ink: #E6F1FF; --ink-soft: #9DB4D0; --ink-faint: #6F86A3;
+    --surface: #0A0F1C; --surface-raised: #111A2E; --border: #1F2D4A;
+    --accent: #2DE2C5; --accent-soft: #0F2A32; --accent-2: #4D8DFF;
+    --status-good: #2DE2A0; --status-good-bg: #0E2A22; --status-neutral: #8FA3BD; --status-neutral-bg: #18233A;
+    --error: #FF6B7A; --error-bg: #33161E; --warn: #FFC857; --warn-bg: #33290F;
+    --c-applied: #5B8CFF; --c-progress: #2DE2C5; --c-reject: #FF6B7A; --c-other: #FFC857;
+    --c-grid: #1F2D4A; --c-bar: #3E6FD6; --c-met: #2DE2A0; --c-target: #FF6B7A;
+    --t1: #2DE2C5; --t2: #4D8DFF; --t3: #FFC857; --t4: #C07BFF; --t5: #7DDB6B; --t6: #6F86A3;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35); --on-accent: #06121A; --on-error: #1A0509; --btn-a: #2DE2C5; --btn-b: #4D8DFF;
+    --glow: 0 0 22px rgba(45,226,197,.12);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--surface); color: var(--ink);
+    font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14px;
+  }
+  a { color: var(--accent); }
+
+  .shell { display: flex; min-height: 100vh; }
+
+  .nav {
+    width: 220px; flex-shrink: 0; background: var(--surface-raised);
+    border-right: 1px solid var(--border); padding: 20px 14px; overflow-y: auto;
+  }
+  .nav h1 {
+    font-family: "Newsreader", Georgia, serif; font-size: 1.15rem; font-weight: 500;
+    margin: 0 0 4px; padding: 0 6px;
+  }
+  .nav .sub { font-size: 0.72rem; color: var(--ink-faint); margin: 0 0 18px; padding: 0 6px; }
+  .nav-group { margin-bottom: 14px; }
+  .nav-group-label {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.66rem; letter-spacing: 0.07em;
+    text-transform: uppercase; color: var(--ink-faint); padding: 0 6px; margin-bottom: 6px;
+  }
+  .nav-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 8px; border-radius: 8px; cursor: pointer; font-size: 0.86rem;
+    color: var(--ink-soft);
+  }
+  .nav-item:hover { background: var(--surface); }
+  .nav-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .nav-item .count {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--ink-faint);
+  }
+  .nav-item.active .count { color: var(--accent); }
+
+  .mobile-select { display: none; }
+
+  .main { flex: 1; padding: 24px clamp(16px, 4vw, 32px); overflow-x: auto; }
+
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; margin-bottom: 18px; flex-wrap: wrap;
+  }
+  .topbar h2 {
+    font-family: "Newsreader", Georgia, serif; font-size: 1.5rem; font-weight: 500; margin: 0;
+  }
+  .topbar .meta { font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--ink-faint); }
+
+  button {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.78rem;
+    border: 1px solid var(--border); background: var(--surface-raised); color: var(--ink);
+    border-radius: 100px; padding: 7px 14px; cursor: pointer;
+  }
+  button:hover { background: var(--accent-soft); color: var(--accent); }
+  button:disabled { opacity: 0.5; cursor: default; }
+
+  .update-panel {
+    background: var(--surface-raised); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .update-panel input[type=text] {
+    flex: 1; min-width: 220px; font-family: "IBM Plex Sans", sans-serif; font-size: 0.88rem;
+    padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px;
+    background: var(--surface); color: var(--ink);
+  }
+  .update-result {
+    font-size: 0.82rem; margin-top: 10px; padding: 8px 10px; border-radius: 8px;
+    background: var(--status-good-bg); color: var(--status-good); display: none;
+  }
+  .update-result.error { background: var(--error-bg); color: var(--error); }
+  .update-result.show { display: block; }
+
+  .empty-state {
+    background: var(--surface-raised); border: 1px dashed var(--border); border-radius: 12px;
+    padding: 28px; text-align: center; color: var(--ink-faint); font-size: 0.9rem;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: var(--surface-raised);
+    border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  thead th {
+    text-align: left; font-family: "IBM Plex Mono", monospace; font-size: 0.68rem;
+    letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-faint);
+    font-weight: 500; padding: 10px 12px; border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  tbody td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top;
+    max-width: 320px; overflow: hidden; text-overflow: ellipsis; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--accent-soft); }
+  .mono { font-family: "IBM Plex Mono", monospace; font-size: 0.8rem; color: var(--ink-faint); }
+
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .filter-bar input[type=text] {
+    min-width: 200px; flex: 1; max-width: 340px; font-family: "IBM Plex Sans", sans-serif; font-size: 0.85rem;
+    padding: 7px 12px; border: 1px solid var(--border); border-radius: 100px;
+    background: var(--surface-raised); color: var(--ink);
+  }
+  .filter-bar select {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.74rem; padding: 6px 10px;
+    border: 1px solid var(--border); border-radius: 100px; background: var(--surface-raised); color: var(--ink);
+  }
+  .filter-bar .row-count { font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--ink-faint); }
+  thead th.sortable { cursor: pointer; user-select: none; white-space: nowrap; }
+  thead th.sortable:hover { color: var(--accent); }
+  thead th .arrow { color: var(--accent); }
+
+  thead th .col-filter {
+    margin-left: 6px; border: 0; background: transparent; color: var(--ink-faint); cursor: pointer;
+    padding: 0 2px; line-height: 1; vertical-align: middle; border-radius: 4px;
+  }
+  thead th .col-filter svg { width: 11px; height: 11px; display: block; }
+  thead th .col-filter:hover { color: var(--accent); background: var(--accent-soft); }
+  thead th .col-filter.active { color: var(--accent); }
+  thead th .col-filter.active svg { fill: currentColor; }
+  thead th.filtered { background: var(--accent-soft); color: var(--accent); }
+
+  .filter-pop {
+    position: absolute; z-index: 50; width: min(280px, 92vw);
+    background: var(--surface-raised); border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.18); padding: 10px; font-size: 0.82rem;
+    display: flex; flex-direction: column; gap: 8px; color: var(--ink);
+  }
+  .filter-pop .pop-actions { display: flex; justify-content: space-between; gap: 8px; }
+  .filter-pop .pop-actions button {
+    border: 0; background: transparent; color: var(--accent); cursor: pointer; padding: 2px 4px;
+    font-family: "IBM Plex Mono", monospace; font-size: 0.72rem;
+  }
+  .filter-pop input[type=text] {
+    width: 100%; font-family: "IBM Plex Sans", sans-serif; font-size: 0.82rem; padding: 6px 10px;
+    border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--ink);
+  }
+  .filter-pop .pop-list { overflow-y: auto; display: flex; flex-direction: column; gap: 1px; }
+  .filter-pop label { display: flex; align-items: center; gap: 8px; padding: 4px 6px; border-radius: 6px; cursor: pointer; }
+  .filter-pop label:hover { background: var(--accent-soft); }
+  .filter-pop label.zero { opacity: 0.5; }
+  .filter-pop .n { margin-left: auto; font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--ink-faint); }
+
+  .cards { display: flex; flex-direction: column; gap: 10px; }
+  .card {
+    background: var(--surface-raised); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .card summary { cursor: pointer; font-weight: 600; font-size: 0.92rem; }
+  .card .card-body { margin-top: 10px; display: grid; gap: 6px; font-size: 0.85rem; }
+  .card .field-label {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.66rem; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--ink-faint);
+  }
+  .card .field-value { color: var(--ink-soft); white-space: pre-wrap; }
+
+  @media (max-width: 760px) {
+    .nav { display: none; }
+    .mobile-select { display: block; margin-bottom: 16px; }
+    .update-panel input[type=text] { min-width: 0; flex-basis: 100%; }
+    .mobile-select select {
+      width: 100%; font-family: "IBM Plex Mono", monospace; font-size: 0.85rem;
+      padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface-raised); color: var(--ink);
+    }
+    tbody td { max-width: 160px; }
+  }
+</style>
+<script>
+  // apply the saved theme (or ?theme=name for a one-off preview) before first paint; localStorage may be blocked
+  (function () {
+    try {
+      var q = new URLSearchParams(location.search).get("theme");
+      var t = q || localStorage.getItem("careerOsTheme");
+      if (t && t !== "auto") document.documentElement.setAttribute("data-theme", t);
+    } catch (e) {}
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+</head>
+<body>
+  <div id="themeToast" class="theme-toast" role="status" aria-live="polite"></div>
+  <div class="shell">
+    <nav class="nav" id="nav">
+      <h1>Career OS</h1>
+      <p class="sub">Data Browser · 127.0.0.1 only</p>
+      <div id="navGroups"></div>
+    </nav>
+
+    <main class="main">
+      <div class="mobile-select">
+        <select id="mobileSelect"></select>
+      </div>
+
+      <div class="topbar">
+        <h2 id="tableTitle">Loading…</h2>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="meta" id="loadedAt"></span>
+          <select id="themeSelect" class="theme-select" aria-label="Theme" title="Theme">
+            <option value="auto">Theme: Auto</option><option value="ocean">Ocean</option><option value="sunset">Sunset</option>
+            <option value="violet">Violet</option><option value="midnight">Midnight</option><option value="forest">Forest</option>
+          </select>
+          <button id="idsBtn" type="button">Show ids</button>
+          <button id="refreshBtn" type="button">Refresh</button>
+        </div>
+      </div>
+
+      <div class="update-panel">
+        <input type="text" id="updateInput" placeholder='Tell it what changed — e.g. "mark role 7 applied", "Alex Kim referred me"'>
+        <button id="updateBtn" type="button">Send</button>
+      </div>
+      <div class="update-result" id="updateResult"></div>
+
+      <div id="content"></div>
+    </main>
+  </div>
+
+<script src="/static/dashboard.js"></script>
+<script>
+const EMPTY_HINTS = {
+  interviews: "Interviews appear here once you log one, e.g. via the update box above or `career update`.",
+  interview_signals: "Signals appear once an interview note mentions a dimension like metrics, system design, or leadership.",
+  stories: "Stories are written by hand, not auto-extracted — none captured yet.",
+  application_status: "No roles yet. Add one with `career add-job`.",
+  application_answers: "No application answers saved yet. Add one with `career answer-add --role N --question \"Why us?\" --answer-file draft.md`.",
+  referrals: "Referrals appear when you tell Career OS who offered one, e.g. `career update \"Dev said he can refer me at Google\"`.",
+  job_sources: "Job sources are seeded by `career seed`, or add one: `career update \"Add CalCareers as a government job source\"`.",
+  learning_resources: "Add one with `career learn-add` or `career update \"Add this Educative course ...\"`.",
+  duplicates: "Nothing's been flagged as a possible duplicate yet.",
+  notes_inbox: "Notes that couldn't be confidently linked to a role or contact land here. Empty is good news.",
+};
+
+const DENSE_TABLES = new Set([
+  "companies","roles","applications","contacts",
+  "interactions","interviews","interview_signals","claims","duplicates",
+  "notes_inbox","skills","referrals","job_sources",
+]);
+const CARD_TABLES = new Set(["evidence","stories","raw_sources","learning_resources","application_answers"]);
+
+let state = { data: null, activeTable: null, showIds: false, views: {} };
+
+// Per-table sort/filter choices survive Refresh and switching tabs.
+function viewFor(table) {
+  if (!state.views[table]) state.views[table] = { sortCol: null, dir: 1, q: "", filters: {}, range: null, drill: null };
+  return state.views[table];
+}
+// Priority and status read best in their natural order, not alphabetically.
+const ORDER_HINTS = {
+  "Top priority": 0, "Medium priority": 1, "Low priority": 2, "Not rated": 3,
+  offer: 0, final_round: 1, interview_loop: 2, hiring_manager: 3, recruiter_screen: 4, applied: 5,
+  referred: 6, referral_requested: 7, planned: 8, rejected: 9, withdrawn: 10, closed: 11,
+};
+function compareValues(a, b) {
+  const blankA = a === null || a === undefined || a === "", blankB = b === null || b === undefined || b === "";
+  if (blankA || blankB) return blankA === blankB ? 0 : (blankA ? 1 : -1);  // blanks always last
+  const sa = String(a), sb = String(b);
+  if (sa in ORDER_HINTS && sb in ORDER_HINTS) return ORDER_HINTS[sa] - ORDER_HINTS[sb];
+  const na = Number(sa), nb = Number(sb);
+  if (!Number.isNaN(na) && !Number.isNaN(nb)) return na - nb;
+  return sa.localeCompare(sb, undefined, { numeric: true, sensitivity: "base" });
+}
+
+const LABELS = { application_status: "Applications (current status)", dashboard: "Dashboard", action_center: "Action Center" };
+
+async function loadData() {
+  const res = await fetch("/api/data");
+  state.data = await res.json();
+  document.getElementById("loadedAt").textContent = "loaded " + new Date().toLocaleTimeString();
+  buildNav();
+  if (!state.activeTable) state.activeTable = "action_center";
+  render();
+}
+
+// sidebar groups can be collapsed; the choice is remembered per browser (localStorage may be blocked)
+function loadCollapsed() {
+  try { return new Set(JSON.parse(localStorage.getItem("careerOsNavCollapsed") || "[]")); } catch (e) { return new Set(); }
+}
+function saveCollapsed(set) { try { localStorage.setItem("careerOsNavCollapsed", JSON.stringify([...set])); } catch (e) {} }
+
+function buildNav() {
+  const groups = state.data._groups;
+  const collapsed = loadCollapsed();
+  if (state.navShown !== state.activeTable) {   // navigating somewhere always reveals its group
+    for (const [g, tables] of Object.entries(groups)) if (tables.includes(state.activeTable)) collapsed.delete(g);
+    saveCollapsed(collapsed);
+    state.navShown = state.activeTable;
+  }
+  const navGroups = document.getElementById("navGroups");
+  const mobileSelect = document.getElementById("mobileSelect");
+  navGroups.innerHTML = "";
+  mobileSelect.innerHTML = "";
+
+  for (const [groupName, tables] of Object.entries(groups)) {
+    const groupDiv = document.createElement("div");
+    groupDiv.className = "nav-group";
+    const isCollapsed = collapsed.has(groupName);
+    const label = document.createElement("div");
+    label.className = "nav-group-label" + (isCollapsed ? " collapsed" : "");
+    label.setAttribute("role", "button");
+    label.setAttribute("tabindex", "0");
+    label.setAttribute("aria-expanded", String(!isCollapsed));
+    label.innerHTML = `<span class="chev" aria-hidden="true">&#9662;</span><span class="gname">${groupName}</span><span class="gcount">${tables.length}</span>`;
+    const toggle = () => { if (collapsed.has(groupName)) collapsed.delete(groupName); else collapsed.add(groupName); saveCollapsed(collapsed); buildNav(); };
+    label.onclick = toggle;
+    label.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } };
+    groupDiv.appendChild(label);
+    const body = document.createElement("div");
+    body.className = "nav-items";
+    body.hidden = isCollapsed;
+    groupDiv.appendChild(body);
+
+    const optGroup = document.createElement("optgroup");
+    optGroup.label = groupName;
+
+    for (const table of tables) {
+      const count = (state.data[table] || []).length;
+      const item = document.createElement("div");
+      item.className = "nav-item" + (table === state.activeTable ? " active" : "");
+      item.innerHTML = `<span>${labelFor(table)}</span>` + (table === "dashboard" || table === "action_center" ? "" : `<span class="count">${count}</span>`);
+      item.onclick = () => { state.activeTable = table; buildNav(); render(); };
+      body.appendChild(item);
+
+      const opt = document.createElement("option");
+      opt.value = table;
+      opt.textContent = (table === "dashboard" || table === "action_center") ? labelFor(table) : `${labelFor(table)} (${count})`;
+      if (table === state.activeTable) opt.selected = true;
+      optGroup.appendChild(opt);
+    }
+    navGroups.appendChild(groupDiv);
+    mobileSelect.appendChild(optGroup);
+  }
+}
+
+function labelFor(table) {
+  if (LABELS[table]) return LABELS[table];
+  return table.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function render() {
+  closePop();
+  const table = state.activeTable;
+  const rows = state.data[table] || [];
+  document.getElementById("tableTitle").textContent = labelFor(table);
+  const content = document.getElementById("content");
+  content.innerHTML = "";
+
+  if (table === "action_center") {   // computed view: this week's actions, from /api/actions
+    content.appendChild(renderActionCenter());
+    return;
+  }
+
+  if (table === "dashboard") {   // computed view: charts and KPIs from /api/metrics, each linking to filtered tables
+    content.appendChild(renderDashboard());
+    return;
+  }
+
+  if (rows.length === 0) {
+    const div = document.createElement("div");
+    div.className = "empty-state";
+    div.textContent = EMPTY_HINTS[table] || "No rows yet.";
+    content.appendChild(div);
+    return;
+  }
+
+  if (CARD_TABLES.has(table)) {
+    content.appendChild(renderCards(rows));
+  } else {
+    content.appendChild(renderTable(rows));
+  }
+}
+
+// ---- Excel-style column filters -------------------------------------------------------------
+// view.filters[col] = array of selected values; empty/absent = no filter. A filter that selects
+// nothing is stored as [NONE_SELECTED] (matches no row).
+const NONE_SELECTED = "\u0000none";
+const FUNNEL_SVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M2 3h12L9.5 8.5V13l-3-1.5V8.5z"/></svg>';
+let openPop = null;   // { el, col, table }: only one filter popover is open at a time
+
+function cellKey(v) { return v === null || v === undefined ? "" : String(v); }
+function closePop() { if (openPop) { openPop.el.remove(); openPop = null; } }
+document.addEventListener("mousedown", (e) => {
+  if (openPop && !openPop.el.contains(e.target) && !e.target.closest(".col-filter")) closePop();
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePop(); });
+window.addEventListener("resize", closePop);
+
+function renderTable(rows) {
+  // Hide raw foreign-key ids (company_id, role_id, ...): names are shown beside them. "Show ids" restores them.
+  const cols = Object.keys(rows[0]).filter(c => typeof rows[0][c] !== "object" &&
+    (state.showIds || c === "id" || !c.endsWith("_id")));
+  const view = viewFor(state.activeTable);
+  const wrap = document.createElement("div");
+
+  const bar = document.createElement("div");
+  bar.className = "filter-bar";
+  const search = document.createElement("input");
+  search.type = "text"; search.placeholder = "Search rows…"; search.value = view.q;
+  search.oninput = () => { view.q = search.value; draw(); };
+  let chip = null;
+  if (view.drill) {   // arrived from a dashboard chart: say what was selected and offer the way back
+    chip = document.createElement("span");
+    chip.className = "drill-chip";
+    bar.appendChild(chip);
+  }
+  bar.appendChild(search);
+  const clear = document.createElement("button");
+  clear.type = "button"; clear.textContent = "Clear";
+  clear.onclick = () => {
+    view.q = ""; view.filters = {}; view.range = null; view.drill = null; view.sortCol = null; view.dir = 1;
+    search.value = ""; closePop(); render();
+  };
+  const count = document.createElement("span");
+  count.className = "row-count";
+  bar.appendChild(clear); bar.appendChild(count);
+
+  const holder = document.createElement("div");
+  holder.style.overflowX = "auto";
+  holder.addEventListener("scroll", closePop);
+  wrap.appendChild(bar); wrap.appendChild(holder);
+
+  // Columns that are really categories get a funnel; free-text, ids and dates do not.
+  const filterable = new Set(cols.filter(c => {
+    if (c === "id" || c.endsWith("_id") || c.includes("date") || c.includes("_at") || c.startsWith("last_")) return false;
+    if (/(url|key|reason|notes|hint|summary|title)$/.test(c)) return false;   // free text: use Search
+    const n = new Set(rows.map(r => cellKey(r[c]))).size;
+    // a real category: few distinct values, or clearly fewer than the number of rows
+    return n >= 2 && n <= 40 && (n <= 12 || n <= rows.length * 0.6);
+  }));
+  const selectedOf = (c) => {
+    const v = view.filters[c];
+    return typeof v === "string" ? (v ? [v] : []) : (v || []);
+  };
+  const isActive = (c) => selectedOf(c).length > 0;
+  const q = () => view.q.trim().toLowerCase();
+  const matchesQ = (r) => !q() || cols.some(c => cellKey(r[c]).toLowerCase().includes(q()));
+  // skip = a column whose own filter is ignored (used for the per-value counts in its popover)
+  const matchesFilters = (r, skip) => Object.keys(view.filters).every(c =>
+    c === skip || !isActive(c) || selectedOf(c).includes(cellKey(r[c])));
+
+  function openFilter(c, anchor) {
+    if (openPop && openPop.col === c && openPop.table === state.activeTable) { closePop(); return; }
+    closePop();
+    const el = document.createElement("div");
+    el.className = "filter-pop";
+    openPop = { el, col: c, table: state.activeTable };
+    document.body.appendChild(el);
+    const allValues = [...new Set(rows.map(r => cellKey(r[c])))].sort(compareValues);
+    let popQ = "";
+
+    function paint() {
+      const sel = selectedOf(c);
+      const checked = (v) => sel.length === 0 ? true : sel.includes(v);
+      const counts = {};
+      rows.filter(r => matchesQ(r) && matchesFilters(r, c)).forEach(r => {
+        const k = cellKey(r[c]); counts[k] = (counts[k] || 0) + 1;
+      });
+      el.innerHTML = "";
+      const actions = document.createElement("div");
+      actions.className = "pop-actions";
+      const all = document.createElement("button");
+      all.type = "button"; all.textContent = "Select all";
+      all.onclick = () => { delete view.filters[c]; draw(); paint(); };
+      const none = document.createElement("button");
+      none.type = "button"; none.textContent = "Clear all";
+      none.onclick = () => { view.filters[c] = [NONE_SELECTED]; draw(); paint(); };
+      actions.appendChild(all); actions.appendChild(none);
+      el.appendChild(actions);
+
+      if (allValues.length > 10) {
+        const box = document.createElement("input");
+        box.type = "text"; box.placeholder = "Find value…"; box.value = popQ;
+        box.oninput = () => { popQ = box.value; paint(); box.focus(); box.setSelectionRange(popQ.length, popQ.length); };
+        el.appendChild(box);
+      }
+      const list = document.createElement("div");
+      list.className = "pop-list";
+      list.style.maxHeight = "280px";
+      for (const v of allValues) {
+        if (popQ && !(v || "(blank)").toLowerCase().includes(popQ.toLowerCase())) continue;
+        const label = document.createElement("label");
+        const n = counts[v] || 0;
+        if (n === 0) label.className = "zero";
+        const cb = document.createElement("input");
+        cb.type = "checkbox"; cb.checked = checked(v);
+        cb.onchange = () => {
+          const cur = new Set(sel.length === 0 ? allValues : sel.filter(x => x !== NONE_SELECTED));
+          if (cb.checked) cur.add(v); else cur.delete(v);
+          if (cur.size === allValues.length) delete view.filters[c];
+          else view.filters[c] = cur.size === 0 ? [NONE_SELECTED] : [...cur];
+          draw(); paint();
+        };
+        const text = document.createElement("span");
+        text.textContent = v === "" ? "(blank)" : v;
+        const num = document.createElement("span");
+        num.className = "n"; num.textContent = String(n);
+        label.appendChild(cb); label.appendChild(text); label.appendChild(num);
+        list.appendChild(label);
+      }
+      el.appendChild(list);
+    }
+    paint();
+    // place under the funnel, kept on screen (page coordinates, so it scrolls with the page)
+    const rect = anchor.getBoundingClientRect();
+    const width = el.offsetWidth || 280;
+    const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
+    el.style.left = (left + window.scrollX) + "px";
+    el.style.top = (rect.bottom + window.scrollY + 4) + "px";
+  }
+
+  const inRange = (r) => {
+    const rg = view.range;
+    if (!rg) return true;
+    const v = cellKey(r[rg.column]).slice(0, 10);
+    return v !== "" && rg.from <= v && v <= rg.to;
+  };
+
+  function draw() {
+    let shown = rows.filter(r => matchesQ(r) && matchesFilters(r, null) && inRange(r));
+    if (view.sortCol) {
+      shown = shown.map((r, i) => [r, i]).sort((x, y) =>
+        view.dir * compareValues(x[0][view.sortCol], y[0][view.sortCol]) || x[1] - y[1]).map(p => p[0]);
+    }
+    count.textContent = shown.length === rows.length ? `${rows.length} rows` : `${shown.length} of ${rows.length} rows`;
+    if (chip) {
+      chip.innerHTML = `From ${view.drill.from === "action_center" ? "Action Center" : "Dashboard"}: ${escapeHtml(view.drill.label)} · ${shown.length} rows <button type="button" id="backToDash">${view.drill.from === "action_center" ? "Back to Action Center" : "Back to dashboard"}</button>`;
+      chip.querySelector("#backToDash").onclick = backToDashboard;
+    }
+
+    const table = document.createElement("table");
+    const thead = document.createElement("thead");
+    const htr = document.createElement("tr");
+    for (const c of cols) {
+      const th = document.createElement("th");
+      th.className = "sortable" + (isActive(c) ? " filtered" : "");
+      th.title = "Click to sort";
+      th.innerHTML = escapeHtml(labelFor(c)) +
+        (view.sortCol === c ? ` <span class="arrow">${view.dir === 1 ? "▲" : "▼"}</span>` : "");
+      th.onclick = () => {
+        if (view.sortCol === c) view.dir = -view.dir; else { view.sortCol = c; view.dir = 1; }
+        draw();
+      };
+      if (filterable.has(c)) {
+        const f = document.createElement("button");
+        f.type = "button";
+        f.className = "col-filter" + (isActive(c) ? " active" : "");
+        f.title = "Filter " + labelFor(c);
+        f.setAttribute("aria-label", "Filter " + labelFor(c));
+        f.innerHTML = FUNNEL_SVG;
+        f.onclick = (e) => { e.stopPropagation(); openFilter(c, f); };
+        th.appendChild(f);
+      }
+      htr.appendChild(th);
+    }
+    thead.appendChild(htr);
+    table.appendChild(thead);
+    const tbody = document.createElement("tbody");
+    for (const row of shown) {
+      const tr = document.createElement("tr");
+      const roleId = row.role_id !== undefined && row.role_id !== null ? row.role_id
+        : ((state.activeTable === "roles" || state.activeTable === "application_status") ? row.id : null);
+      if (roleId !== null && roleId !== undefined) {   // click a row to open that role's detail drawer
+        tr.className = "rowlink"; tr.title = "Click to open this role";
+        tr.onclick = () => openRoleDrawer(Number(roleId));
+      }
+      tr.innerHTML = cols.map(c => {
+        const val = row[c];
+        const cls = (c === "id" || c.endsWith("_id") || c.includes("date") || c.includes("_at")) ? ' class="mono"' : "";
+        const display = val === null || val === undefined ? "" : String(val);
+        return `<td${cls} title="${escapeHtml(display)}">${escapeHtml(truncate(display, 80))}</td>`;
+      }).join("");
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    holder.innerHTML = "";
+    holder.appendChild(table);
+  }
+  draw();
+  return wrap;
+}
+
+function renderCards(rows) {
+  const outer = document.createElement("div");
+  const view = viewFor(state.activeTable);
+  const bar = document.createElement("div");
+  bar.className = "filter-bar";
+  const search = document.createElement("input");
+  search.type = "text"; search.placeholder = "Filter cards…"; search.value = view.q;
+  const count = document.createElement("span");
+  count.className = "row-count";
+  bar.appendChild(search); bar.appendChild(count);
+  outer.appendChild(bar);
+  const wrap = document.createElement("div");
+  wrap.className = "cards";
+  outer.appendChild(wrap);
+  const cardEls = [];
+  const applyFilter = () => {
+    view.q = search.value;
+    const q = view.q.trim().toLowerCase();
+    let n = 0;
+    for (const [el, text] of cardEls) { const ok = !q || text.includes(q); el.style.display = ok ? "" : "none"; if (ok) n++; }
+    count.textContent = n === rows.length ? `${rows.length} cards` : `${n} of ${rows.length} cards`;
+  };
+  search.oninput = applyFilter;
+  for (const row of rows) {
+    const card = document.createElement("details");
+    card.className = "card";
+    cardEls.push([card, Object.values(row).filter(v => v !== null && typeof v !== "object").join(" ").toLowerCase()]);
+    const titleField = row.question ? `${row.role || ""}: ${row.question}` : (row.project || row.title || row.company || `#${row.id}`);
+    const summary = document.createElement("summary");
+    summary.textContent = titleField;
+    card.appendChild(summary);
+    const body = document.createElement("div");
+    body.className = "card-body";
+    for (const [key, val] of Object.entries(row)) {
+      if (val === null || val === "" || typeof val === "object") continue;
+      const fl = document.createElement("div");
+      fl.className = "field-label";
+      fl.textContent = labelFor(key);
+      const fv = document.createElement("div");
+      fv.className = "field-value";
+      fv.textContent = val;
+      body.appendChild(fl);
+      body.appendChild(fv);
+    }
+    card.appendChild(body);
+    wrap.appendChild(card);
+  }
+  applyFilter();
+  return outer;
+}
+
+function truncate(s, n) { return s.length > n ? s.slice(0, n) + "…" : s; }
+function escapeHtml(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+document.getElementById("refreshBtn").onclick = loadData;
+
+// theme switcher: stored per browser; "auto" removes the attribute so the system light/dark setting applies
+(function () {
+  const sel = document.getElementById("themeSelect");
+  let cur = document.documentElement.getAttribute("data-theme") || "auto";   // set by the early script in <head>
+  if (![...sel.options].some(o => o.value === cur)) cur = "auto";
+  sel.value = cur;
+  sel.onchange = () => {
+    const t = sel.value;
+    if (t === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", t);
+    try { localStorage.setItem("careerOsTheme", t); } catch (e) {}
+    const toast = document.getElementById("themeToast");
+    toast.textContent = "Theme: " + sel.options[sel.selectedIndex].text.replace("Theme: ", "");
+    toast.classList.add("show");
+    clearTimeout(toast._t); toast._t = setTimeout(() => toast.classList.remove("show"), 1600);
+  };
+})();
+document.getElementById("idsBtn").onclick = (e) => {
+  state.showIds = !state.showIds;
+  e.target.textContent = state.showIds ? "Hide ids" : "Show ids";
+  render();
+};
+document.getElementById("mobileSelect").onchange = (e) => {
+  state.activeTable = e.target.value; render(); buildNav();
+};
+
+document.getElementById("updateBtn").onclick = async () => {
+  const input = document.getElementById("updateInput");
+  const text = input.value.trim();
+  if (!text) return;
+  const btn = document.getElementById("updateBtn");
+  btn.disabled = true;
+  const resultBox = document.getElementById("updateResult");
+  try {
+    const res = await fetch("/api/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    const body = await res.json();
+    resultBox.classList.remove("error");
+    if (body.error) {
+      resultBox.classList.add("error");
+      resultBox.textContent = "Error: " + body.error;
+    } else {
+      resultBox.textContent = "Interpreted as: " + body.result.kind + " — " + JSON.stringify(body.result);
+    }
+    resultBox.classList.add("show");
+    input.value = "";
+    await loadData();
+  } catch (e) {
+    resultBox.classList.add("error", "show");
+    resultBox.textContent = "Request failed: " + e.message;
+  } finally {
+    btn.disabled = false;
+  }
+};
+document.getElementById("updateInput").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") document.getElementById("updateBtn").click();
+});
+
+loadData();
+</script>
+</body>
+</html>
